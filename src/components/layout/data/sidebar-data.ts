@@ -31,6 +31,7 @@ export const sidebarData: SidebarData = {
     email: 'satnaingdev@gmail.com',
     avatar: '/avatars/shadcn.jpg',
   },
+
   teams: [
     {
       name: 'Shadcn Admin',
@@ -48,20 +49,43 @@ export const sidebarData: SidebarData = {
       plan: 'Startup',
     },
   ],
+
   navGroups: [
     {
-      title: 'General',
+      title: 'عمومی',
       items: [
         {
-          title: 'Dashboard',
+          title: 'داشبورد',
           url: '/',
           icon: LayoutDashboard,
         },
         {
-          title: 'Tasks',
+          title: 'تسک ها',
           url: '/tasks',
           icon: ListTodo,
         },
+      ],
+    },
+
+    {
+      title: 'اطلاعات پایه',
+      items: [
+        {
+          title: 'مشتریان',
+          url: '/customers',
+          icon: Users,
+        },
+        {
+          title: 'کالاها',
+          url: '/products',
+          icon: Package,
+        },
+      ],
+    },
+
+    {
+      title: 'General',
+      items: [
         {
           title: 'Apps',
           url: '/apps',
@@ -98,6 +122,7 @@ export const sidebarData: SidebarData = {
         },
       ],
     },
+
     {
       title: 'Pages',
       items: [
@@ -127,6 +152,7 @@ export const sidebarData: SidebarData = {
             },
           ],
         },
+
         {
           title: 'Errors',
           icon: Bug,
@@ -160,6 +186,7 @@ export const sidebarData: SidebarData = {
         },
       ],
     },
+
     {
       title: 'Other',
       items: [
@@ -194,6 +221,7 @@ export const sidebarData: SidebarData = {
             },
           ],
         },
+
         {
           title: 'Help Center',
           url: '/help-center',
