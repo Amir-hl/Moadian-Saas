@@ -1,11 +1,19 @@
+import { useState } from 'react'
 import { ArrowRight, Plus } from 'lucide-react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 
 import { Button } from '@/components/ui/button'
 
+import { InvoiceItemDeleteDialog } from '@/features/invoices/components/invoice-items/invoice-item-delete-dialog'
+import { InvoiceItemDialog } from '@/features/invoices/components/invoice-items/invoice-item-dialog'
 import { InvoiceItemsTable } from '@/features/invoices/components/invoice-items/invoice-items-table'
-import type { InvoiceStatus } from '@/features/invoices/data/schema'
+import type {
+  Invoice,
+  InvoiceItem,
+  InvoiceStatus,
+} from '@/features/invoices/data/schema'
 import { invoices } from '@/features/invoices/data/invoices'
+import { calculateInvoiceTotals } from '@/features/invoices/utils/invoice-calculations'
 
 export const Route = createFileRoute(
   '/_authenticated/invoices/$invoiceId'
@@ -16,7 +24,20 @@ export const Route = createFileRoute(
 function InvoiceDetails() {
   const { invoiceId } = Route.useParams()
 
-  const invoice = invoices.find((item) => item.id === invoiceId)
+  const initialInvoice = invoices.find(
+    (item) => item.id === invoiceId
+  )
+
+  const [invoice, setInvoice] = useState<Invoice | null>(
+    initialInvoice ?? null
+  )
+
+  const [itemDialogOpen, setItemDialogOpen] = useState(false)
+
+  const [currentItem, setCurrentItem] =
+    useState<InvoiceItem | null>(null)
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
   if (!invoice) {
     return (
@@ -62,6 +83,69 @@ function InvoiceDetails() {
     }
   }
 
+  const handleAddItem = () => {
+    setCurrentItem(null)
+    setItemDialogOpen(true)
+  }
+
+  const handleEditItem = (item: InvoiceItem) => {
+    setCurrentItem(item)
+    setItemDialogOpen(true)
+  }
+
+  const handleDeleteRequest = (item: InvoiceItem) => {
+    setCurrentItem(item)
+    setDeleteDialogOpen(true)
+  }
+
+  const handleSubmitItem = (item: InvoiceItem) => {
+    setInvoice((previous) => {
+      if (!previous) return previous
+
+      const exists = previous.items.some(
+        (current) => current.id === item.id
+      )
+
+      const updatedItems = exists
+        ? previous.items.map((current) =>
+            current.id === item.id ? item : current
+          )
+        : [...previous.items, item]
+
+      const totals = calculateInvoiceTotals(updatedItems)
+
+      return {
+        ...previous,
+        items: updatedItems,
+        ...totals,
+        updatedAt: new Date(),
+      }
+    })
+
+    setCurrentItem(null)
+  }
+
+  const handleDeleteItem = (item: InvoiceItem) => {
+    setInvoice((previous) => {
+      if (!previous) return previous
+
+      const updatedItems = previous.items.filter(
+        (current) => current.id !== item.id
+      )
+
+      const totals = calculateInvoiceTotals(updatedItems)
+
+      return {
+        ...previous,
+        items: updatedItems,
+        ...totals,
+        updatedAt: new Date(),
+      }
+    })
+
+    setCurrentItem(null)
+  }
+
   return (
     <div className='flex flex-1 flex-col gap-6 p-4 md:p-6'>
       <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
@@ -84,7 +168,7 @@ function InvoiceDetails() {
           </p>
         </div>
 
-        <Button>
+        <Button onClick={handleAddItem}>
           <Plus className='me-2 h-4 w-4' />
           افزودن قلم
         </Button>
@@ -157,7 +241,11 @@ function InvoiceDetails() {
           </p>
         </div>
 
-        <InvoiceItemsTable items={invoice.items} />
+        <InvoiceItemsTable
+          items={invoice.items}
+          onEdit={handleEditItem}
+          onDelete={handleDeleteRequest}
+        />
       </div>
 
       <div className='flex justify-end'>
@@ -185,6 +273,16 @@ function InvoiceDetails() {
 
             <div className='flex justify-between gap-4'>
               <span className='text-muted-foreground'>
+                مبلغ مشمول مالیات
+              </span>
+
+              <span>
+                {formatNumber(invoice.taxableAmount)} ریال
+              </span>
+            </div>
+
+            <div className='flex justify-between gap-4'>
+              <span className='text-muted-foreground'>
                 مالیات
               </span>
 
@@ -205,6 +303,20 @@ function InvoiceDetails() {
           </div>
         </div>
       </div>
+
+      <InvoiceItemDialog
+        open={itemDialogOpen}
+        onOpenChange={setItemDialogOpen}
+        currentItem={currentItem}
+        onSubmit={handleSubmitItem}
+      />
+
+      <InvoiceItemDeleteDialog
+        item={currentItem}
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={handleDeleteItem}
+      />
     </div>
   )
 }

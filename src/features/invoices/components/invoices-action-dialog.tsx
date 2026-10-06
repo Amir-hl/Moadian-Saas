@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react'
 import { CalendarIcon } from 'lucide-react'
 
@@ -101,6 +102,10 @@ export function InvoicesActionDialog({
 
       subtotal: currentRow?.subtotal ?? 0,
       discount: currentRow?.discount ?? 0,
+
+      // مبلغ مشمول مالیات
+      taxableAmount: currentRow?.taxableAmount ?? 0,
+
       tax: currentRow?.tax ?? 0,
       total: currentRow?.total ?? 0,
 

@@ -23,7 +23,11 @@ export const invoiceItemSchema = z.object({
 
   unitPrice: z.number().nonnegative(),
 
+  grossAmount: z.number().nonnegative(),
+
   discount: z.number().nonnegative(),
+
+  taxableAmount: z.number().nonnegative(),
 
   taxRate: z.number().nonnegative(),
 
@@ -52,6 +56,8 @@ export const invoiceSchema = z.object({
   subtotal: z.number().nonnegative(),
 
   discount: z.number().nonnegative(),
+
+  taxableAmount: z.number().nonnegative(),
 
   tax: z.number().nonnegative(),
 

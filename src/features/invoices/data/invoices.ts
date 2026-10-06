@@ -19,9 +19,14 @@ export const invoices: Invoice[] = [
         quantity: 100,
         unit: 'کیلوگرم',
         unitPrice: 850000,
+
+        grossAmount: 85000000,
         discount: 0,
+        taxableAmount: 85000000,
+
         taxRate: 10,
         taxAmount: 8500000,
+
         total: 93500000,
       },
       {
@@ -31,15 +36,21 @@ export const invoices: Invoice[] = [
         quantity: 50,
         unit: 'کیلوگرم',
         unitPrice: 620000,
+
+        grossAmount: 31000000,
         discount: 1000000,
+        taxableAmount: 30000000,
+
         taxRate: 10,
         taxAmount: 3000000,
+
         total: 33000000,
       },
     ],
 
     subtotal: 116000000,
     discount: 1000000,
+    taxableAmount: 115000000,
     tax: 11500000,
     total: 126500000,
 
@@ -67,9 +78,14 @@ export const invoices: Invoice[] = [
         quantity: 20,
         unit: 'شاخه',
         unitPrice: 1250000,
+
+        grossAmount: 25000000,
         discount: 0,
+        taxableAmount: 25000000,
+
         taxRate: 10,
         taxAmount: 2500000,
+
         total: 27500000,
       },
       {
@@ -79,17 +95,23 @@ export const invoices: Invoice[] = [
         quantity: 30,
         unit: 'متر',
         unitPrice: 980000,
+
+        grossAmount: 29400000,
         discount: 500000,
+        taxableAmount: 28900000,
+
         taxRate: 10,
         taxAmount: 2890000,
+
         total: 31790000,
       },
     ],
 
-    subtotal: 54500000,
+    subtotal: 54400000,
     discount: 500000,
+    taxableAmount: 53900000,
     tax: 5390000,
-    total: 59390000,
+    total: 59290000,
 
     status: 'submitted',
 
