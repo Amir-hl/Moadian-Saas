@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
+import { useNavigate } from '@tanstack/react-router'
 
 import { Button } from '@/components/ui/button'
 
@@ -10,6 +11,8 @@ import type { Invoice } from './data/schema'
 import { invoices as initialInvoices } from './data/invoices'
 
 export default function Invoices() {
+  const navigate = useNavigate()
+
   const [data, setData] = useState<Invoice[]>(initialInvoices)
 
   const [actionDialogOpen, setActionDialogOpen] = useState(false)
@@ -57,7 +60,12 @@ export default function Invoices() {
   }
 
   const handleSelect = (invoice: Invoice) => {
-    console.log('Selected invoice:', invoice)
+    navigate({
+      to: '/invoices/$invoiceId',
+      params: {
+        invoiceId: invoice.id,
+      },
+    })
   }
 
   return (

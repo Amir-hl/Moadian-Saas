@@ -21,6 +21,7 @@ import {
   AudioWaveform,
   Command,
   GalleryVerticalEnd,
+  Receipt,
 } from 'lucide-react'
 import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
@@ -79,6 +80,11 @@ export const sidebarData: SidebarData = {
           title: 'کالاها',
           url: '/products',
           icon: Package,
+        },
+        {
+          title: 'فاکتورها',
+          url: '/invoices',
+          icon: Receipt,
         },
       ],
     },
