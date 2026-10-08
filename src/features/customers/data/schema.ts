@@ -23,11 +23,17 @@ export const customerSchema = z.object({
 
   phoneNumber: z.string(),
 
+  mobileNumber: z.string().optional(),
+
   email: z.string().optional(),
 
   address: z.string().optional(),
 
   postalCode: z.string().optional(),
+
+  branchCode: z.string().optional(),
+
+  taxpayerId: z.string().optional(),
 
   status: customerStatusSchema,
 

@@ -8,6 +8,7 @@ export const products: Product[] = [
     unit: 'کیلوگرم',
     price: 850000,
     taxRate: 10,
+    isService: false,
     status: 'active',
   },
   {
@@ -17,6 +18,7 @@ export const products: Product[] = [
     unit: 'کیلوگرم',
     price: 620000,
     taxRate: 10,
+    isService: false,
     status: 'active',
   },
   {
@@ -26,6 +28,7 @@ export const products: Product[] = [
     unit: 'شاخه',
     price: 1250000,
     taxRate: 10,
+    isService: false,
     status: 'active',
   },
   {
@@ -35,6 +38,7 @@ export const products: Product[] = [
     unit: 'متر',
     price: 980000,
     taxRate: 10,
+    isService: false,
     status: 'inactive',
   },
 ]

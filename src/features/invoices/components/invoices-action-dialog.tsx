@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react'
 import { CalendarIcon } from 'lucide-react'
 
@@ -21,7 +20,14 @@ import {
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 
-import type { Invoice, InvoiceStatus } from '../data/schema'
+import type {
+  Invoice,
+  InvoicePattern,
+  InvoiceStatus,
+  InvoiceSubject,
+  InvoiceType,
+  SettlementMethod,
+} from '../data/schema'
 
 type InvoicesActionDialogProps = {
   open: boolean
@@ -35,6 +41,10 @@ type InvoiceForm = {
   date: string
   customerId: string
   customerName: string
+  invoiceType: InvoiceType
+  invoicePattern: InvoicePattern
+  invoiceSubject: InvoiceSubject
+  settlementMethod: SettlementMethod
   description: string
   status: InvoiceStatus
 }
@@ -44,6 +54,10 @@ const emptyForm: InvoiceForm = {
   date: new Date().toISOString().slice(0, 10),
   customerId: '',
   customerName: '',
+  invoiceType: 'type1',
+  invoicePattern: 'normal',
+  invoiceSubject: 'sale',
+  settlementMethod: 'cash',
   description: '',
   status: 'draft',
 }
@@ -67,6 +81,10 @@ export function InvoicesActionDialog({
         date: currentRow.date.toISOString().slice(0, 10),
         customerId: currentRow.customerId,
         customerName: currentRow.customerName,
+        invoiceType: currentRow.invoiceType,
+        invoicePattern: currentRow.invoicePattern,
+        invoiceSubject: currentRow.invoiceSubject,
+        settlementMethod: currentRow.settlementMethod,
         description: currentRow.description ?? '',
         status: currentRow.status,
       })
@@ -94,22 +112,37 @@ export function InvoicesActionDialog({
       id: currentRow?.id ?? `inv-${Date.now()}`,
       invoiceNumber: form.invoiceNumber,
       date: new Date(form.date),
+
       customerId: form.customerId,
       customerName: form.customerName,
+
+      invoiceType: form.invoiceType,
+      invoicePattern: form.invoicePattern,
+      invoiceSubject: form.invoiceSubject,
+      settlementMethod: form.settlementMethod,
+
+      relatedTaxId: currentRow?.relatedTaxId,
+
       description: form.description || undefined,
 
       items: currentRow?.items ?? [],
 
       subtotal: currentRow?.subtotal ?? 0,
       discount: currentRow?.discount ?? 0,
-
-      // مبلغ مشمول مالیات
       taxableAmount: currentRow?.taxableAmount ?? 0,
-
       tax: currentRow?.tax ?? 0,
       total: currentRow?.total ?? 0,
 
       status: form.status,
+
+      moadianTaxId: currentRow?.moadianTaxId,
+      moadianUid: currentRow?.moadianUid,
+      moadianReferenceNumber:
+        currentRow?.moadianReferenceNumber,
+      moadianStatus: currentRow?.moadianStatus,
+      moadianErrorCode: currentRow?.moadianErrorCode,
+      moadianErrorMessage: currentRow?.moadianErrorMessage,
+      submittedAt: currentRow?.submittedAt,
 
       createdAt: currentRow?.createdAt ?? now,
       updatedAt: now,
@@ -191,6 +224,106 @@ export function InvoicesActionDialog({
                 placeholder='نام مشتری'
                 required
               />
+            </div>
+          </div>
+
+          <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
+            <div className='space-y-2'>
+              <Label>نوع فاکتور</Label>
+
+              <Select
+                value={form.invoiceType}
+                onValueChange={(value) =>
+                  updateField('invoiceType', value as InvoiceType)
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value='type1'>نوع اول</SelectItem>
+                  <SelectItem value='type2'>نوع دوم</SelectItem>
+                  <SelectItem value='type3'>نوع سوم</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className='space-y-2'>
+              <Label>الگوی فاکتور</Label>
+
+              <Select
+                value={form.invoicePattern}
+                onValueChange={(value) =>
+                  updateField(
+                    'invoicePattern',
+                    value as InvoicePattern
+                  )
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value='normal'>عادی</SelectItem>
+                  <SelectItem value='simplified'>ساده</SelectItem>
+                  <SelectItem value='special'>خاص</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
+            <div className='space-y-2'>
+              <Label>موضوع فاکتور</Label>
+
+              <Select
+                value={form.invoiceSubject}
+                onValueChange={(value) =>
+                  updateField(
+                    'invoiceSubject',
+                    value as InvoiceSubject
+                  )
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value='sale'>فروش</SelectItem>
+                  <SelectItem value='currency'>ارزی</SelectItem>
+                  <SelectItem value='service'>خدمات</SelectItem>
+                  <SelectItem value='other'>سایر</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className='space-y-2'>
+              <Label>روش تسویه</Label>
+
+              <Select
+                value={form.settlementMethod}
+                onValueChange={(value) =>
+                  updateField(
+                    'settlementMethod',
+                    value as SettlementMethod
+                  )
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value='cash'>نقدی</SelectItem>
+                  <SelectItem value='credit'>نسیه</SelectItem>
+                  <SelectItem value='cash_and_credit'>
+                    نقدی و نسیه
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 

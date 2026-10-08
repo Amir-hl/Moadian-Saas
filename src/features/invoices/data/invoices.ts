@@ -9,6 +9,11 @@ export const invoices: Invoice[] = [
     customerId: 'customer-001',
     customerName: 'شرکت فولاد نمونه',
 
+    invoiceType: 'type1',
+    invoicePattern: 'normal',
+    invoiceSubject: 'sale',
+    settlementMethod: 'cash',
+
     description: 'فاکتور فروش محصولات فولادی',
 
     items: [
@@ -16,6 +21,8 @@ export const invoices: Invoice[] = [
         id: 'item-001',
         productId: '1',
         productName: 'ورق فولادی',
+        sstid: 'sstid-001',
+
         quantity: 100,
         unit: 'کیلوگرم',
         unitPrice: 850000,
@@ -33,6 +40,8 @@ export const invoices: Invoice[] = [
         id: 'item-002',
         productId: '2',
         productName: 'میلگرد 16',
+        sstid: 'sstid-002',
+
         quantity: 50,
         unit: 'کیلوگرم',
         unitPrice: 620000,
@@ -68,6 +77,11 @@ export const invoices: Invoice[] = [
     customerId: 'customer-002',
     customerName: 'شرکت بازرگانی نمونه',
 
+    invoiceType: 'type1',
+    invoicePattern: 'normal',
+    invoiceSubject: 'sale',
+    settlementMethod: 'credit',
+
     description: 'فروش پروفیل و لوله فولادی',
 
     items: [
@@ -75,6 +89,8 @@ export const invoices: Invoice[] = [
         id: 'item-003',
         productId: '3',
         productName: 'پروفیل 40×40',
+        sstid: 'sstid-003',
+
         quantity: 20,
         unit: 'شاخه',
         unitPrice: 1250000,
@@ -92,6 +108,8 @@ export const invoices: Invoice[] = [
         id: 'item-004',
         productId: '4',
         productName: 'لوله فولادی',
+        sstid: 'sstid-004',
+
         quantity: 30,
         unit: 'متر',
         unitPrice: 980000,

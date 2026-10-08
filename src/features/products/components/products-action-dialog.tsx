@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { Product } from '../data/schema'
 
-
 type ProductsActionDialogProps = {
   product?: Product | null
   open: boolean
@@ -88,6 +87,7 @@ export function ProductsActionDialog({
       unit: unit.trim(),
       price: numericPrice,
       taxRate: numericTaxRate,
+      isService: product?.isService ?? false,
       status,
     }
 
