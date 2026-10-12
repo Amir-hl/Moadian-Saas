@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -32,6 +33,7 @@ type InvoiceItemDialogProps = {
 type InvoiceItemForm = {
   productId: string
   productName: string
+  sstid: string
   quantity: string
   unit: string
   unitPrice: string
@@ -42,6 +44,7 @@ type InvoiceItemForm = {
 const emptyForm: InvoiceItemForm = {
   productId: '',
   productName: '',
+  sstid: '',
   quantity: '1',
   unit: '',
   unitPrice: '0',
@@ -66,6 +69,7 @@ export function InvoiceItemDialog({
       setForm({
         productId: currentItem.productId,
         productName: currentItem.productName,
+        sstid: currentItem.sstid ?? '',
         quantity: String(currentItem.quantity),
         unit: currentItem.unit,
         unitPrice: String(currentItem.unitPrice),
@@ -123,6 +127,7 @@ export function InvoiceItemDialog({
       ...previous,
       productId: product.id,
       productName: product.name,
+      sstid: product.sstid ?? '',
       unit: product.unit,
       unitPrice: String(product.price),
       taxRate: String(product.taxRate),
@@ -139,7 +144,12 @@ export function InvoiceItemDialog({
     const discount = Number(form.discount) || 0
     const taxRate = Number(form.taxRate) || 0
 
-    if (quantity <= 0 || unitPrice < 0 || discount < 0 || taxRate < 0) {
+    if (
+      quantity <= 0 ||
+      unitPrice < 0 ||
+      discount < 0 ||
+      taxRate < 0
+    ) {
       return
     }
 
@@ -147,8 +157,13 @@ export function InvoiceItemDialog({
       id: currentItem?.id ?? `item-${Date.now()}`,
 
       productId: form.productId,
+
       productName:
         selectedProduct?.name ?? form.productName,
+
+      sstid:
+        selectedProduct?.sstid ??
+        (form.sstid || undefined),
 
       quantity,
 
@@ -209,6 +224,19 @@ export function InvoiceItemDialog({
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          <div className='space-y-2'>
+            <Label htmlFor='sstid'>
+              شناسه کالا / خدمت
+            </Label>
+
+            <Input
+              id='sstid'
+              value={form.sstid}
+              readOnly
+              placeholder='شناسه کالا/خدمت از اطلاعات کالا'
+            />
           </div>
 
           <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
