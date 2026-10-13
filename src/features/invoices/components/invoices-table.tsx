@@ -1,8 +1,8 @@
+
 import { useMemo, useState } from 'react'
-import { Pencil, Search, Trash2 } from 'lucide-react'
+import { Search } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
   Table,
@@ -13,6 +13,8 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
+import { InvoicesRowActions } from './invoices-row-actions'
+
 import type { Invoice, InvoiceStatus } from '../data/schema'
 
 type InvoicesTableProps = {
@@ -20,6 +22,7 @@ type InvoicesTableProps = {
   onEdit: (invoice: Invoice) => void
   onDelete: (invoice: Invoice) => void
   onSelect: (invoice: Invoice) => void
+  onShowHistory: (invoice: Invoice) => void
 }
 
 export function InvoicesTable({
@@ -27,6 +30,7 @@ export function InvoicesTable({
   onEdit,
   onDelete,
   onSelect,
+  onShowHistory,
 }: InvoicesTableProps) {
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState<'all' | InvoiceStatus>('all')
@@ -170,24 +174,13 @@ export function InvoicesTable({
                       className='text-left'
                       onClick={(event) => event.stopPropagation()}
                     >
-                      <div className='flex justify-end gap-1'>
-                        <Button
-                          variant='ghost'
-                          size='icon'
-                          title='ویرایش'
-                          onClick={() => onEdit(invoice)}
-                        >
-                          <Pencil className='h-4 w-4' />
-                        </Button>
-
-                        <Button
-                          variant='ghost'
-                          size='icon'
-                          title='حذف'
-                          onClick={() => onDelete(invoice)}
-                        >
-                          <Trash2 className='h-4 w-4 text-destructive' />
-                        </Button>
+                      <div className='flex justify-end'>
+                        <InvoicesRowActions
+                          invoice={invoice}
+                          onEdit={onEdit}
+                          onDelete={onDelete}
+                          onShowHistory={onShowHistory}
+                        />
                       </div>
                     </TableCell>
                   </TableRow>

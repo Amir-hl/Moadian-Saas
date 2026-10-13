@@ -1,3 +1,4 @@
+
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import { useNavigate } from '@tanstack/react-router'
@@ -7,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { InvoicesActionDialog } from './components/invoices-action-dialog'
 import { InvoicesDeleteDialog } from './components/invoices-delete-dialog'
 import { InvoicesTable } from './components/invoices-table'
+import { InvoiceSubmissionHistoryDialog } from './components/invoice-submission-history-dialog'
 import type { Invoice } from './data/schema'
 import { invoices as initialInvoices } from './data/invoices'
 
@@ -17,8 +19,10 @@ export default function Invoices() {
 
   const [actionDialogOpen, setActionDialogOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [historyDialogOpen, setHistoryDialogOpen] = useState(false)
 
   const [currentRow, setCurrentRow] = useState<Invoice | null>(null)
+  const [historyInvoice, setHistoryInvoice] = useState<Invoice | null>(null)
 
   const handleAdd = () => {
     setCurrentRow(null)
@@ -68,6 +72,11 @@ export default function Invoices() {
     })
   }
 
+  const handleShowHistory = (invoice: Invoice) => {
+    setHistoryInvoice(invoice)
+    setHistoryDialogOpen(true)
+  }
+
   return (
     <div className='flex flex-1 flex-col gap-6 p-4 md:p-6'>
       <div className='flex items-center justify-between gap-4'>
@@ -92,6 +101,7 @@ export default function Invoices() {
         onEdit={handleEdit}
         onDelete={handleDeleteRequest}
         onSelect={handleSelect}
+        onShowHistory={handleShowHistory}
       />
 
       <InvoicesActionDialog
@@ -106,6 +116,12 @@ export default function Invoices() {
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
         onConfirm={handleDelete}
+      />
+
+      <InvoiceSubmissionHistoryDialog
+        invoice={historyInvoice}
+        open={historyDialogOpen}
+        onOpenChange={setHistoryDialogOpen}
       />
     </div>
   )

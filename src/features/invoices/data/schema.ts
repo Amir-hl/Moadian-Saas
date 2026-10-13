@@ -1,3 +1,4 @@
+
 import { z } from 'zod'
 
 export const invoiceStatusSchema = z.union([
@@ -8,6 +9,35 @@ export const invoiceStatusSchema = z.union([
   z.literal('rejected'),
   z.literal('cancelled'),
 ])
+
+export const invoiceSubmissionAttemptSchema = z.object({
+  id: z.string(),
+
+  attemptNumber: z.number().int().positive(),
+
+  status: z.union([
+    z.literal('processing'),
+    z.literal('success'),
+    z.literal('failed'),
+    z.literal('unknown'),
+  ]),
+
+  submittedAt: z.coerce.date(),
+
+  completedAt: z.coerce.date().optional(),
+
+  trackingId: z.string().optional(),
+
+  taxInvoiceId: z.string().optional(),
+
+  errorCode: z.string().optional(),
+
+  errorMessage: z.string().optional(),
+})
+
+export type InvoiceSubmissionAttempt = z.infer<
+  typeof invoiceSubmissionAttemptSchema
+>
 
 export const invoiceTypeSchema = z.union([
   z.literal('type1'),
@@ -131,6 +161,9 @@ export const invoiceSchema = z.object({
   moadianErrorMessage: z.string().optional(),
 
   submittedAt: z.coerce.date().optional(),
+
+  // تاریخچه تمام تلاش‌های ارسال فاکتور
+  submissionHistory: z.array(invoiceSubmissionAttemptSchema).default([]),
 
   createdAt: z.coerce.date(),
 
