@@ -111,6 +111,7 @@ export function InvoicesActionDialog({
     const invoice: Invoice = {
       id: currentRow?.id ?? `inv-${Date.now()}`,
       invoiceNumber: form.invoiceNumber,
+      submissionHistory: currentRow?.submissionHistory ?? [],
       date: new Date(form.date),
 
       customerId: form.customerId,

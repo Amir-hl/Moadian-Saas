@@ -15,7 +15,10 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 
-import type { Invoice } from '../data/schema'
+import type {
+  Invoice,
+  InvoiceSubmissionAttempt,
+} from '../data/schema'
 
 type InvoiceSubmissionHistoryDialogProps = {
   invoice: Invoice | null
@@ -23,82 +26,7 @@ type InvoiceSubmissionHistoryDialogProps = {
   onOpenChange: (open: boolean) => void
 }
 
-type AttemptStatus = 'success' | 'failed' | 'processing' | 'unknown'
-
-type SubmissionAttempt = {
-  attemptNumber: number
-  status: AttemptStatus
-  date: Date
-  trackingId?: string
-  errorCode?: string
-  message: string
-}
-
-function getDemoAttempts(invoice: Invoice): SubmissionAttempt[] {
-  if (invoice.status === 'draft') {
-    return []
-  }
-
-  const date = invoice.submittedAt ?? invoice.updatedAt ?? invoice.date
-
-  if (invoice.status === 'approved') {
-    return [
-      {
-        attemptNumber: 1,
-        status: 'success',
-        date,
-        trackingId: invoice.moadianReferenceNumber,
-        message: 'ارسال آزمایشی موفق؛ وضعیت فاکتور تأیید شده است.',
-      },
-    ]
-  }
-
-  if (invoice.status === 'rejected') {
-    return [
-      {
-        attemptNumber: 1,
-        status: 'failed',
-        date,
-        errorCode: invoice.moadianErrorCode,
-        message:
-          invoice.moadianErrorMessage ||
-          'فاکتور در داده‌های نمونه رد شده است.',
-      },
-    ]
-  }
-
-  if (invoice.status === 'pending') {
-    return [
-      {
-        attemptNumber: 1,
-        status: 'processing',
-        date,
-        message: 'وضعیت ارسال در انتظار بررسی است.',
-      },
-    ]
-  }
-
-  if (invoice.status === 'submitted') {
-    return [
-      {
-        attemptNumber: 1,
-        status: 'unknown',
-        date,
-        trackingId: invoice.moadianReferenceNumber,
-        message: 'فاکتور ارسال‌شده است؛ نتیجه نهایی در داده‌های نمونه مشخص نیست.',
-      },
-    ]
-  }
-
-  return [
-    {
-      attemptNumber: 1,
-      status: 'unknown',
-      date,
-      message: 'اطلاعات کافی برای تعیین نتیجه ارسال وجود ندارد.',
-    },
-  ]
-}
+type AttemptStatus = InvoiceSubmissionAttempt['status']
 
 const statusInfo: Record<
   AttemptStatus,
@@ -130,12 +58,21 @@ const statusInfo: Record<
   },
 }
 
+const statusMessages: Record<AttemptStatus, string> = {
+  success: 'ارسال با موفقیت انجام شده است.',
+  failed: 'ارسال با خطا مواجه شده است.',
+  processing: 'درخواست ارسال در حال پردازش است.',
+  unknown: 'نتیجه نهایی ارسال مشخص نیست.',
+}
+
 export function InvoiceSubmissionHistoryDialog({
   invoice,
   open,
   onOpenChange,
 }: InvoiceSubmissionHistoryDialogProps) {
-  const attempts = invoice ? getDemoAttempts(invoice) : []
+  const attempts = [...(invoice?.submissionHistory ?? [])].sort(
+    (a, b) => b.attemptNumber - a.attemptNumber
+  )
 
   const formatDateTime = (date: Date) =>
     new Intl.DateTimeFormat('fa-IR', {
@@ -145,7 +82,7 @@ export function InvoiceSubmissionHistoryDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='max-h-[85vh] overflow-y-auto sm:max-w-xl'>
+      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>تاریخچه ارسال فاکتور</DialogTitle>
           <DialogDescription>
@@ -155,21 +92,23 @@ export function InvoiceSubmissionHistoryDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className='space-y-4'>
-          <div className='rounded-md border p-3 text-sm'>
-            <div className='flex items-center justify-between gap-3'>
-              <span className='text-muted-foreground'>وضعیت فعلی فاکتور</span>
-              <Badge variant='secondary'>
+        <div className="space-y-4">
+          <div className="rounded-md border p-3 text-sm">
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-muted-foreground">
+                وضعیت فعلی فاکتور
+              </span>
+              <Badge variant="secondary">
                 {invoice?.status ?? 'نامشخص'}
               </Badge>
             </div>
           </div>
 
-          <div className='space-y-3'>
-            <h3 className='font-medium'>تلاش‌های ارسال</h3>
+          <div className="space-y-3">
+            <h3 className="font-medium">تلاش‌های ارسال</h3>
 
-            {attempts.length === 0 ? (
-              <div className='rounded-md border border-dashed p-6 text-center text-sm text-muted-foreground'>
+            {!invoice || attempts.length === 0 ? (
+              <div className="rounded-md border border-dashed p-6 text-center text-sm text-muted-foreground">
                 هنوز سابقه‌ای برای ارسال این فاکتور ثبت نشده است.
               </div>
             ) : (
@@ -179,39 +118,58 @@ export function InvoiceSubmissionHistoryDialog({
 
                 return (
                   <div
-                    key={attempt.attemptNumber}
-                    className='space-y-3 rounded-md border p-4'
+                    key={attempt.id}
+                    className="space-y-3 rounded-md border p-4"
                   >
-                    <div className='flex items-center justify-between gap-3'>
-                      <div className='flex items-center gap-2 font-medium'>
-                        <Icon className='h-4 w-4' />
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-2 font-medium">
+                        <Icon className="h-4 w-4" />
                         تلاش شماره {attempt.attemptNumber}
                       </div>
 
-                      <Badge variant={info.variant}>{info.label}</Badge>
+                      <Badge variant={info.variant}>
+                        {info.label}
+                      </Badge>
                     </div>
 
-                    <div className='text-sm text-muted-foreground'>
-                      زمان: {formatDateTime(attempt.date)}
+                    <div className="text-sm text-muted-foreground">
+                      زمان ارسال: {formatDateTime(attempt.submittedAt)}
                     </div>
 
-                    <p className='text-sm'>{attempt.message}</p>
+                    {attempt.completedAt && (
+                      <div className="text-sm text-muted-foreground">
+                        زمان تکمیل: {formatDateTime(attempt.completedAt)}
+                      </div>
+                    )}
+
+                    <p className="text-sm">
+                      {attempt.errorMessage || statusMessages[attempt.status]}
+                    </p>
 
                     {attempt.trackingId && (
-                      <div className='text-sm'>
-                        <span className='text-muted-foreground'>
-                          شناسه پیگیری: 
+                      <div className="text-sm">
+                        <span className="text-muted-foreground">
+                          شناسه پیگیری:{' '}
                         </span>
-                        <span dir='ltr'>{attempt.trackingId}</span>
+                        <span dir="ltr">{attempt.trackingId}</span>
+                      </div>
+                    )}
+
+                    {attempt.taxInvoiceId && (
+                      <div className="text-sm">
+                        <span className="text-muted-foreground">
+                          شناسه مالیاتی صورتحساب:{' '}
+                        </span>
+                        <span dir="ltr">{attempt.taxInvoiceId}</span>
                       </div>
                     )}
 
                     {attempt.errorCode && (
-                      <div className='text-sm'>
-                        <span className='text-muted-foreground'>
-                          کد خطا: 
+                      <div className="text-sm">
+                        <span className="text-muted-foreground">
+                          کد خطا:{' '}
                         </span>
-                        <span dir='ltr'>{attempt.errorCode}</span>
+                        <span dir="ltr">{attempt.errorCode}</span>
                       </div>
                     )}
                   </div>
@@ -220,9 +178,10 @@ export function InvoiceSubmissionHistoryDialog({
             )}
           </div>
 
-          <p className='text-xs text-muted-foreground'>
-            توجه: این سوابق فعلاً نمایشی هستند و از تاریخچه واقعی سامانه
-            مودیان دریافت نشده‌اند.
+          <p className="text-xs text-muted-foreground">
+            این بخش اطلاعات موجود در تاریخچه فاکتور را نمایش می‌دهد.
+            ثبت خودکار نتیجه ارسال به سامانه مودیان و ذخیره‌سازی دائمی
+            به اتصال بک‌اند نیاز دارد.
           </p>
         </div>
       </DialogContent>

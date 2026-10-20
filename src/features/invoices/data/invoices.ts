@@ -65,6 +65,7 @@ export const invoices: Invoice[] = [
 
     status: 'draft',
 
+    submissionHistory: [],
     createdAt: new Date('2026-09-28'),
     updatedAt: new Date('2026-09-28'),
   },
@@ -133,6 +134,7 @@ export const invoices: Invoice[] = [
 
     status: 'submitted',
 
+    submissionHistory: [],
     createdAt: new Date('2026-09-29'),
     updatedAt: new Date('2026-09-29'),
   },
