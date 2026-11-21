@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { Product } from '../data/schema'
+import { initialUnits } from '@/features/units/data/units'
 
 type ProductsActionDialogProps = {
   product?: Product | null
@@ -16,9 +17,10 @@ export function ProductsActionDialog({
 }: ProductsActionDialogProps) {
   const [code, setCode] = useState('')
   const [name, setName] = useState('')
-  const [unit, setUnit] = useState('')
-  const [price, setPrice] = useState('')
+  const [sstid, setSstid] = useState('')
+  const [unitCode, setUnitCode] = useState('164')
   const [taxRate, setTaxRate] = useState('10')
+  const [description, setDescription] = useState('')
   const [status, setStatus] = useState<'active' | 'inactive'>('active')
   const [error, setError] = useState('')
 
@@ -29,9 +31,10 @@ export function ProductsActionDialog({
 
     setCode(product?.code ?? '')
     setName(product?.name ?? '')
-    setUnit(product?.unit ?? '')
-    setPrice(product ? String(product.price) : '')
+    setSstid(product?.sstid ?? '')
+    setUnitCode(product?.unitCode ?? '164')
     setTaxRate(product ? String(product.taxRate) : '10')
+    setDescription(product?.description ?? '')
     setStatus(product?.status ?? 'active')
     setError('')
   }, [product, open])
@@ -42,29 +45,17 @@ export function ProductsActionDialog({
     event.preventDefault()
 
     if (!code.trim()) {
-      setError('کد کالا الزامی است.')
+      setError('کد داخلی کالا الزامی است.')
       return
     }
 
     if (!name.trim()) {
-      setError('نام کالا الزامی است.')
+      setError('نام کالا یا خدمت الزامی است.')
       return
     }
 
-    if (!unit.trim()) {
-      setError('واحد کالا الزامی است.')
-      return
-    }
-
-    if (!price.trim()) {
-      setError('قیمت کالا الزامی است.')
-      return
-    }
-
-    const numericPrice = Number(price)
-
-    if (Number.isNaN(numericPrice) || numericPrice < 0) {
-      setError('قیمت کالا باید یک عدد معتبر باشد.')
+    if (!sstid.trim()) {
+      setError('شناسه ۱۳ یا ۱۶ رقمی کالا/خدمت مودیان (SSTID) الزامی است.')
       return
     }
 
@@ -80,13 +71,19 @@ export function ProductsActionDialog({
       return
     }
 
+    const matchedUnit = initialUnits.find((u) => u.code === unitCode)
+    const unitName = matchedUnit ? matchedUnit.name : 'عدد'
+
     const savedProduct: Product = {
       id: product?.id ?? crypto.randomUUID(),
       code: code.trim(),
       name: name.trim(),
-      unit: unit.trim(),
-      price: numericPrice,
+      sstid: sstid.trim(),
+      unit: unitName,
+      unitCode: unitCode,
+      price: product?.price ?? 0,
       taxRate: numericTaxRate,
+      description: description.trim() || undefined,
       isService: product?.isService ?? false,
       status,
     }
@@ -107,11 +104,11 @@ export function ProductsActionDialog({
       <div className='max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg border bg-background p-6 shadow-lg'>
         <div className='mb-6'>
           <h2 className='text-xl font-semibold'>
-            {isEdit ? 'ویرایش کالا' : 'افزودن کالا'}
+            {isEdit ? 'ویرایش کالا / خدمت' : 'افزودن کالا / خدمت جدید'}
           </h2>
 
           <p className='mt-1 text-sm text-muted-foreground'>
-            اطلاعات کالا را وارد کنید.
+            مشخصات کالا و شناسه مالیاتی سامانه مودیان را وارد کنید.
           </p>
         </div>
 
@@ -125,7 +122,7 @@ export function ProductsActionDialog({
           <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
             <div>
               <label className='mb-1.5 block text-sm font-medium'>
-                کد کالا *
+                کد داخلی کالا *
               </label>
 
               <input
@@ -139,49 +136,55 @@ export function ProductsActionDialog({
 
             <div>
               <label className='mb-1.5 block text-sm font-medium'>
-                نام کالا *
+                نام کالا یا خدمت *
               </label>
 
               <input
                 value={name}
                 onChange={(event) => setName(event.target.value)}
                 className='h-10 w-full rounded-md border bg-background px-3 text-sm'
-                placeholder='نام کالا'
+                placeholder='مثال: لوله پلی‌اتیلن ۶۳ میلیمتر'
               />
             </div>
 
-            <div>
+            <div className='md:col-span-2'>
               <label className='mb-1.5 block text-sm font-medium'>
-                واحد *
+                شناسه کالا / خدمت سامانه مودیان (SSTID) *
               </label>
 
               <input
-                value={unit}
-                onChange={(event) => setUnit(event.target.value)}
-                className='h-10 w-full rounded-md border bg-background px-3 text-sm'
-                placeholder='مثلاً کیلوگرم، عدد، متر، شاخه'
-              />
-            </div>
-
-            <div>
-              <label className='mb-1.5 block text-sm font-medium'>
-                قیمت *
-              </label>
-
-              <input
-                type='number'
-                min='0'
-                value={price}
-                onChange={(event) => setPrice(event.target.value)}
-                className='h-10 w-full rounded-md border bg-background px-3 text-sm'
-                placeholder='قیمت به ریال'
+                value={sstid}
+                onChange={(event) => setSstid(event.target.value)}
+                className='h-10 w-full rounded-md border bg-background px-3 font-mono text-sm'
+                placeholder='شناسه ۱۳ یا ۱۶ رقمی دریافتی از stuffid.tax.gov.ir'
                 dir='ltr'
               />
+              <p className='mt-1 text-xs text-muted-foreground'>
+                شناسه عمومی یا اختصاصی ۱۳ یا ۱۶ رقمی کالا و خدمت در سامانه مودیان
+              </p>
             </div>
 
             <div>
               <label className='mb-1.5 block text-sm font-medium'>
-                نرخ مالیات (%)
+                واحد سنجش کالا *
+              </label>
+
+              <select
+                value={unitCode}
+                onChange={(event) => setUnitCode(event.target.value)}
+                className='h-10 w-full rounded-md border bg-background px-3 text-sm'
+              >
+                {initialUnits.map((u) => (
+                  <option key={u.id} value={u.code}>
+                    {u.name} (کد {u.code})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className='mb-1.5 block text-sm font-medium'>
+                نرخ مالیات بر ارزش افزوده (%) *
               </label>
 
               <input
@@ -194,6 +197,19 @@ export function ProductsActionDialog({
                 className='h-10 w-full rounded-md border bg-background px-3 text-sm'
                 placeholder='10'
                 dir='ltr'
+              />
+            </div>
+
+            <div>
+              <label className='mb-1.5 block text-sm font-medium'>
+                توضیحات
+              </label>
+
+              <input
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+                className='h-10 w-full rounded-md border bg-background px-3 text-sm'
+                placeholder='توضیحات اختیاری کالا'
               />
             </div>
 

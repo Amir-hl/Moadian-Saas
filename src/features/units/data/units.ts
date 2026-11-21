@@ -1,0 +1,147 @@
+export interface UnitItem {
+  id: string
+  code: string // کد استاندارد سامانه مودیان
+  name: string // نام واحد
+  symbol?: string
+  description?: string
+  isStandard: boolean
+}
+
+export const initialUnits: UnitItem[] = [
+  {
+    id: 'unit-164',
+    code: '164',
+    name: 'عدد',
+    symbol: 'pcs',
+    description: 'واحد شمارش اقلام تکی',
+    isStandard: true,
+  },
+  {
+    id: 'unit-161',
+    code: '161',
+    name: 'کیلوگرم',
+    symbol: 'kg',
+    description: 'واحد وزن استاندارد',
+    isStandard: true,
+  },
+  {
+    id: 'unit-163',
+    code: '163',
+    name: 'تن',
+    symbol: 'ton',
+    description: 'هزار کیلوگرم',
+    isStandard: true,
+  },
+  {
+    id: 'unit-162',
+    code: '162',
+    name: 'گرم',
+    symbol: 'g',
+    description: 'یک‌هزارم کیلوگرم',
+    isStandard: true,
+  },
+  {
+    id: 'unit-151',
+    code: '151',
+    name: 'متر',
+    symbol: 'm',
+    description: 'واحد طول',
+    isStandard: true,
+  },
+  {
+    id: 'unit-152',
+    code: '152',
+    name: 'متر مربع',
+    symbol: 'm²',
+    description: 'واحد سطح',
+    isStandard: true,
+  },
+  {
+    id: 'unit-153',
+    code: '153',
+    name: 'متر مکعب',
+    symbol: 'm³',
+    description: 'واحد حجم',
+    isStandard: true,
+  },
+  {
+    id: 'unit-171',
+    code: '171',
+    name: 'لیتر',
+    symbol: 'L',
+    description: 'واحد حجم مایعات',
+    isStandard: true,
+  },
+  {
+    id: 'unit-181',
+    code: '181',
+    name: 'بسته',
+    symbol: 'pack',
+    description: 'بسته‌بندی چندتایی',
+    isStandard: true,
+  },
+  {
+    id: 'unit-182',
+    code: '182',
+    name: 'کارتن',
+    symbol: 'ctn',
+    description: 'کارتن محصولات',
+    isStandard: true,
+  },
+  {
+    id: 'unit-183',
+    code: '183',
+    name: 'دستگاه',
+    symbol: 'unit',
+    description: 'تجهیزات و ماشین‌آلات',
+    isStandard: true,
+  },
+  {
+    id: 'unit-184',
+    code: '184',
+    name: 'جفت',
+    symbol: 'pair',
+    description: 'دو عدد',
+    isStandard: true,
+  },
+  {
+    id: 'unit-185',
+    code: '185',
+    name: 'شاخه',
+    symbol: 'bar',
+    description: 'میلگرد، لوله، پروفیل',
+    isStandard: true,
+  },
+  {
+    id: 'unit-186',
+    code: '186',
+    name: 'طاقه',
+    symbol: 'roll',
+    description: 'پارچه و طاقه‌جات',
+    isStandard: true,
+  },
+  {
+    id: 'unit-187',
+    code: '187',
+    name: 'حلقه',
+    symbol: 'coil',
+    description: 'سیم، لاستیک، کابل',
+    isStandard: true,
+  },
+  {
+    id: 'unit-188',
+    code: '188',
+    name: 'ساعت',
+    symbol: 'hr',
+    description: 'واحد زمان خدمات',
+    isStandard: true,
+  },
+  {
+    id: 'unit-191',
+    code: '191',
+    name: 'خدمت / پروژه',
+    symbol: 'srv',
+    description: 'خدمات کارمزدی یا پیمانکاری',
+    isStandard: true,
+  },
+]

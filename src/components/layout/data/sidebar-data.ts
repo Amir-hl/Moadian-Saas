@@ -18,45 +18,34 @@ import {
   Users,
   MessagesSquare,
   ShieldCheck,
-  AudioWaveform,
-  Command,
-  GalleryVerticalEnd,
   Receipt,
+  Scale,
+  Building2,
 } from 'lucide-react'
 import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
 
 export const sidebarData: SidebarData = {
   user: {
-    name: 'satnaing',
-    email: 'satnaingdev@gmail.com',
+    name: 'مدیر سیستم',
+    email: 'admin@moadian-saas.ir',
     avatar: '/avatars/shadcn.jpg',
   },
 
   teams: [
     {
-      name: 'Shadcn Admin',
-      logo: Command,
-      plan: 'Vite + ShadcnUI',
-    },
-    {
-      name: 'Acme Inc',
-      logo: GalleryVerticalEnd,
-      plan: 'Enterprise',
-    },
-    {
-      name: 'Acme Corp.',
-      logo: AudioWaveform,
-      plan: 'Startup',
+      name: 'سامانه مودیان',
+      logo: Building2,
+      plan: 'نسخه شرکتی',
     },
   ],
 
   navGroups: [
     {
-      title: 'عمومی',
+      title: 'داشبورد',
       items: [
         {
-          title: 'داشبورد',
+          title: 'صفحه اصلی',
           url: '/',
           icon: LayoutDashboard,
         },
@@ -64,53 +53,113 @@ export const sidebarData: SidebarData = {
           title: 'تسک ها',
           url: '/tasks',
           icon: ListTodo,
+          hidden: true, // پنهان اما حفظ‌شده برای ابزارهای بعدی
         },
       ],
     },
 
     {
-      title: 'اطلاعات پایه',
+      title: 'مدیریت صورتحساب و فروش',
       items: [
+        {
+          title: 'فاکتورها',
+          url: '/invoices',
+          icon: Receipt,
+        },
         {
           title: 'مشتریان',
           url: '/customers',
           icon: Users,
         },
         {
-          title: 'کالاها',
+          title: 'کالاها و خدمات',
           url: '/products',
           icon: Package,
         },
         {
-          title: 'فاکتورها',
-          url: '/invoices',
-          icon: Receipt,
+          title: 'واحدهای سنجش',
+          url: '/units',
+          icon: Scale,
         },
       ],
     },
 
     {
-      title: 'General',
+      title: 'تنظیمات سیستم',
+      items: [
+        {
+          title: 'تنظیمات',
+          icon: Settings,
+          items: [
+            {
+              title: 'اطلاعات شرکت و مودیان',
+              url: '/settings/company',
+              icon: Building2,
+            },
+            {
+              title: 'پروفایل کاربری',
+              url: '/settings',
+              icon: UserCog,
+            },
+            {
+              title: 'حساب کاربری',
+              url: '/settings/account',
+              icon: Wrench,
+            },
+            {
+              title: 'ظاهر و قالب',
+              url: '/settings/appearance',
+              icon: Palette,
+            },
+            {
+              title: 'اعلان‌ها',
+              url: '/settings/notifications',
+              icon: Bell,
+            },
+            {
+              title: 'نمایشگر',
+              url: '/settings/display',
+              icon: Monitor,
+            },
+          ],
+        },
+        {
+          title: 'مرکز راهنما',
+          url: '/help-center',
+          icon: HelpCircle,
+          hidden: true,
+        },
+      ],
+    },
+
+    // منوهای جانبی قالب - پنهان‌شده بدون حذف کدهای داخلی
+    {
+      title: 'برنامه‌های جانبی',
+      hidden: true,
       items: [
         {
           title: 'Apps',
           url: '/apps',
           icon: Package,
+          hidden: true,
         },
         {
           title: 'Chats',
           url: '/chats',
           badge: '3',
           icon: MessagesSquare,
+          hidden: true,
         },
         {
           title: 'Users',
           url: '/users',
           icon: Users,
+          hidden: true,
         },
         {
           title: 'Secured by Clerk',
           icon: ClerkLogo,
+          hidden: true,
           items: [
             {
               title: 'Sign In',
@@ -130,11 +179,13 @@ export const sidebarData: SidebarData = {
     },
 
     {
-      title: 'Pages',
+      title: 'صفحات سیستمی',
+      hidden: true,
       items: [
         {
           title: 'Auth',
           icon: ShieldCheck,
+          hidden: true,
           items: [
             {
               title: 'Sign In',
@@ -158,10 +209,10 @@ export const sidebarData: SidebarData = {
             },
           ],
         },
-
         {
           title: 'Errors',
           icon: Bug,
+          hidden: true,
           items: [
             {
               title: 'Unauthorized',
@@ -189,49 +240,6 @@ export const sidebarData: SidebarData = {
               icon: Construction,
             },
           ],
-        },
-      ],
-    },
-
-    {
-      title: 'Other',
-      items: [
-        {
-          title: 'Settings',
-          icon: Settings,
-          items: [
-            {
-              title: 'Profile',
-              url: '/settings',
-              icon: UserCog,
-            },
-            {
-              title: 'Account',
-              url: '/settings/account',
-              icon: Wrench,
-            },
-            {
-              title: 'Appearance',
-              url: '/settings/appearance',
-              icon: Palette,
-            },
-            {
-              title: 'Notifications',
-              url: '/settings/notifications',
-              icon: Bell,
-            },
-            {
-              title: 'Display',
-              url: '/settings/display',
-              icon: Monitor,
-            },
-          ],
-        },
-
-        {
-          title: 'Help Center',
-          url: '/help-center',
-          icon: HelpCircle,
         },
       ],
     },

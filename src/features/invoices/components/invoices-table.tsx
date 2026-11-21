@@ -1,6 +1,6 @@
-
 import { useMemo, useState } from 'react'
-import { Search } from 'lucide-react'
+import { Copy, Check, Search } from 'lucide-react'
+import { toast } from 'sonner'
 
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
@@ -38,6 +38,15 @@ export function InvoicesTable({
 }: InvoicesTableProps) {
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState<'all' | InvoiceStatus>('all')
+  const [copiedTaxId, setCopiedTaxId] = useState<string | null>(null)
+
+  const handleCopyTaxId = (e: React.MouseEvent, taxId: string) => {
+    e.stopPropagation()
+    navigator.clipboard.writeText(taxId)
+    setCopiedTaxId(taxId)
+    toast.success('شماره مالیاتی کپی شد.')
+    setTimeout(() => setCopiedTaxId(null), 2000)
+  }
 
   const filteredInvoices = useMemo(() => {
     const keyword = search.trim().toLowerCase()
@@ -46,7 +55,8 @@ export function InvoicesTable({
       const matchesSearch =
         !keyword ||
         invoice.invoiceNumber.toLowerCase().includes(keyword) ||
-        invoice.customerName.toLowerCase().includes(keyword)
+        invoice.customerName.toLowerCase().includes(keyword) ||
+        (invoice.moadianTaxId && invoice.moadianTaxId.toLowerCase().includes(keyword))
 
       const matchesStatus =
         status === 'all' || invoice.status === status
@@ -59,7 +69,7 @@ export function InvoicesTable({
     new Intl.NumberFormat('fa-IR').format(price)
 
   const formatDate = (date: Date) =>
-    new Intl.DateTimeFormat('fa-IR').format(date)
+    new Intl.DateTimeFormat('fa-IR').format(new Date(date))
 
   const getStatusLabel = (value: InvoiceStatus) => {
     switch (value) {
@@ -103,7 +113,7 @@ export function InvoicesTable({
           <Input
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder='جستجوی شماره فاکتور یا مشتری...'
+            placeholder='جستجوی شماره فاکتور، شماره مالیاتی مودیان یا مشتری...'
             className='ps-9'
           />
         </div>
@@ -131,8 +141,11 @@ export function InvoicesTable({
             <TableHeader>
               <TableRow>
                 <TableHead>شماره فاکتور</TableHead>
+                <TableHead>شماره مالیاتی مودیان</TableHead>
                 <TableHead>مشتری</TableHead>
                 <TableHead>تاریخ</TableHead>
+                <TableHead>تخفیف</TableHead>
+                <TableHead>مالیات</TableHead>
                 <TableHead>مبلغ کل</TableHead>
                 <TableHead>وضعیت</TableHead>
                 <TableHead className='text-left'>عملیات</TableHead>
@@ -143,7 +156,7 @@ export function InvoicesTable({
               {filteredInvoices.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={6}
+                    colSpan={9}
                     className='h-24 text-center text-muted-foreground'
                   >
                     فاکتوری پیدا نشد.
@@ -160,11 +173,45 @@ export function InvoicesTable({
                       {invoice.invoiceNumber}
                     </TableCell>
 
+                    <TableCell>
+                      {invoice.moadianTaxId ? (
+                        <button
+                          type='button'
+                          onClick={(e) => handleCopyTaxId(e, invoice.moadianTaxId!)}
+                          className='inline-flex items-center gap-1.5 rounded bg-muted/60 px-2 py-1 font-mono text-xs font-semibold text-primary hover:bg-muted transition-colors'
+                          title='کلیک جهت کپی شماره مالیاتی ۲۲ رقمی'
+                        >
+                          {copiedTaxId === invoice.moadianTaxId ? (
+                            <Check className='h-3 w-3 text-green-600' />
+                          ) : (
+                            <Copy className='h-3 w-3 text-muted-foreground' />
+                          )}
+                          <span dir='ltr'>{invoice.moadianTaxId}</span>
+                        </button>
+                      ) : (
+                        <span className='text-xs text-muted-foreground'>ارسال نشده</span>
+                      )}
+                    </TableCell>
+
                     <TableCell>{invoice.customerName}</TableCell>
 
                     <TableCell>{formatDate(invoice.date)}</TableCell>
 
-                    <TableCell>
+                    <TableCell className='font-mono text-xs'>
+                      {invoice.discount > 0 ? (
+                        <span className='text-amber-600 dark:text-amber-400'>
+                          {formatPrice(invoice.discount)} ریال
+                        </span>
+                      ) : (
+                        <span className='text-muted-foreground'>۰</span>
+                      )}
+                    </TableCell>
+
+                    <TableCell className='font-mono text-xs'>
+                      {formatPrice(invoice.tax)} ریال
+                    </TableCell>
+
+                    <TableCell className='font-medium font-mono text-sm'>
                       {formatPrice(invoice.total)} ریال
                     </TableCell>
 

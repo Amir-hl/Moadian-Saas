@@ -24,9 +24,15 @@ export function AppSidebar() {
         {/* <AppTitle /> */}
       </SidebarHeader>
       <SidebarContent>
-        {sidebarData.navGroups.map((props) => (
-          <NavGroup key={props.title} {...props} />
-        ))}
+        {sidebarData.navGroups
+          .filter((group) => !group.hidden)
+          .map((props) => (
+            <NavGroup
+              key={props.title}
+              {...props}
+              items={props.items.filter((item) => !item.hidden)}
+            />
+          ))}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={sidebarData.user} />

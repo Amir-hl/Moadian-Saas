@@ -18,7 +18,7 @@ export const productSchema = z.object({
 
   unitCode: z.string().optional(),
 
-  price: z.number(),
+  price: z.number().optional().default(0),
 
   taxRate: z.number(),
 

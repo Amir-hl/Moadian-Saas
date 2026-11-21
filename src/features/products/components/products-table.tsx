@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 import { ProductsRowActions } from './products-row-actions'
 import type { Product } from '../data/schema'
 
-
 type ProductsTableProps = {
   data: Product[]
   onEdit: (product: Product) => void
@@ -25,6 +24,7 @@ export function ProductsTable({
         !keyword ||
         product.code.toLowerCase().includes(keyword) ||
         product.name.toLowerCase().includes(keyword) ||
+        (product.sstid && product.sstid.toLowerCase().includes(keyword)) ||
         product.unit.toLowerCase().includes(keyword)
 
       const matchesStatus =
@@ -34,17 +34,13 @@ export function ProductsTable({
     })
   }, [data, search, status])
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('fa-IR').format(price)
-  }
-
   return (
     <div className='flex flex-1 flex-col gap-4'>
       <div className='flex flex-col gap-3 sm:flex-row'>
         <input
           value={search}
           onChange={(event) => setSearch(event.target.value)}
-          placeholder='جستجو کد، نام یا واحد کالا...'
+          placeholder='جستجو کد، شناسه مودیان، نام یا واحد کالا...'
           className='h-10 flex-1 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring'
         />
 
@@ -71,19 +67,19 @@ export function ProductsTable({
                 </th>
 
                 <th className='px-4 py-3 text-right font-medium'>
-                  نام کالا
+                  نام کالا / خدمت
                 </th>
 
                 <th className='px-4 py-3 text-right font-medium'>
-                  واحد
+                  شناسه مودیان (SSTID)
                 </th>
 
                 <th className='px-4 py-3 text-right font-medium'>
-                  قیمت
+                  واحد سنجش
                 </th>
 
                 <th className='px-4 py-3 text-right font-medium'>
-                  مالیات
+                  نرخ مالیات
                 </th>
 
                 <th className='px-4 py-3 text-right font-medium'>
@@ -112,7 +108,7 @@ export function ProductsTable({
                     key={product.id}
                     className='border-b last:border-0 hover:bg-muted/30'
                   >
-                    <td className='px-4 py-3'>
+                    <td className='px-4 py-3 font-mono text-xs'>
                       {product.code}
                     </td>
 
@@ -121,14 +117,20 @@ export function ProductsTable({
                     </td>
 
                     <td className='px-4 py-3'>
+                      {product.sstid ? (
+                        <span className='font-mono text-xs font-semibold text-primary'>
+                          {product.sstid}
+                        </span>
+                      ) : (
+                        <span className='text-xs text-muted-foreground'>—</span>
+                      )}
+                    </td>
+
+                    <td className='px-4 py-3'>
                       {product.unit}
                     </td>
 
-                    <td className='px-4 py-3'>
-                      {formatPrice(product.price)} ریال
-                    </td>
-
-                    <td className='px-4 py-3'>
+                    <td className='px-4 py-3 font-mono'>
                       {product.taxRate}٪
                     </td>
 
@@ -136,7 +138,7 @@ export function ProductsTable({
                       <span
                         className={
                           product.status === 'active'
-                            ? 'inline-flex rounded-full border px-2.5 py-0.5 text-xs font-medium'
+                            ? 'inline-flex rounded-full border px-2.5 py-0.5 text-xs font-medium bg-green-500/10 text-green-700 dark:text-green-400'
                             : 'inline-flex rounded-full border px-2.5 py-0.5 text-xs font-medium text-muted-foreground'
                         }
                       >
