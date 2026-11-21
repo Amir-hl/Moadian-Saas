@@ -7,9 +7,6 @@ from sqlalchemy import engine_from_config, pool
 from app.core.config import get_settings
 from app.core.database import Base
 import app.models  # noqa: F401
-# Import models here as they are created.
-# Example later:
-# from app.models.customer import Customer
 
 config = context.config
 

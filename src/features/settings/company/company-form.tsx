@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -22,6 +21,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { MoadianConnectionCard } from './moadian-connection-card'
 
 const companyFormSchema = z.object({
   title: z.string().min(2, 'Company or taxpayer name is required.'),
@@ -237,33 +237,7 @@ export function CompanyForm() {
           />
         </section>
 
-        <section className='space-y-4'>
-          <div>
-            <h3 className='text-lg font-medium'>Moadian connection</h3>
-            <p className='text-sm text-muted-foreground'>
-              These fields identify the connection configuration. Credentials
-              and private keys must be handled securely by the backend.
-            </p>
-          </div>
-
-          <FormField
-            control={form.control}
-            name='clientId'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Client ID / fiscal identifier</FormLabel>
-                <FormControl>
-                  <Input dir='ltr' {...field} />
-                </FormControl>
-                <FormDescription>
-                  Do not enter a private key, certificate password, or other
-                  secret in this form.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </section>
+        <MoadianConnectionCard />
 
         <div className='flex flex-wrap items-center gap-3'>
           <Button type='submit'>Save company information</Button>

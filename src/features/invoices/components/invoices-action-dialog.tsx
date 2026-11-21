@@ -135,6 +135,7 @@ export function InvoicesActionDialog({
       total: currentRow?.total ?? 0,
 
       status: form.status,
+      submissionHistory: currentRow?.submissionHistory ?? [],
 
       moadianTaxId: currentRow?.moadianTaxId,
       moadianUid: currentRow?.moadianUid,

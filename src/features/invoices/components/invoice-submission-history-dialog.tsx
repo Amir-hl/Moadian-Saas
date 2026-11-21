@@ -1,12 +1,14 @@
-
+import { useEffect, useState } from 'react'
 import {
   CheckCircle2,
   CircleHelp,
   Clock3,
+  RefreshCw,
   XCircle,
 } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -19,6 +21,7 @@ import type {
   Invoice,
   InvoiceSubmissionAttempt,
 } from '../data/schema'
+import { moadianApi } from '../api/moadian-api'
 
 type InvoiceSubmissionHistoryDialogProps = {
   invoice: Invoice | null
@@ -70,25 +73,61 @@ export function InvoiceSubmissionHistoryDialog({
   open,
   onOpenChange,
 }: InvoiceSubmissionHistoryDialogProps) {
-  const attempts = [...(invoice?.submissionHistory ?? [])].sort(
-    (a, b) => b.attemptNumber - a.attemptNumber
-  )
+  const [remoteAttempts, setRemoteAttempts] = useState<InvoiceSubmissionAttempt[]>([])
+  const [loading, setLoading] = useState(false)
+
+  const fetchHistory = async () => {
+    if (!invoice?.id) return
+    setLoading(true)
+    try {
+      const records = await moadianApi.getSubmissions(invoice.id)
+      setRemoteAttempts(records)
+    } catch {
+      // Fallback silently to invoice.submissionHistory on network error
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (open && invoice?.id) {
+      fetchHistory()
+    } else {
+      setRemoteAttempts([])
+    }
+  }, [open, invoice?.id])
+
+  const attempts = (
+    remoteAttempts.length > 0 ? remoteAttempts : (invoice?.submissionHistory ?? [])
+  ).sort((a, b) => b.attemptNumber - a.attemptNumber)
 
   const formatDateTime = (date: Date) =>
     new Intl.DateTimeFormat('fa-IR', {
       dateStyle: 'medium',
       timeStyle: 'short',
-    }).format(date)
+    }).format(new Date(date))
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle>تاریخچه ارسال فاکتور</DialogTitle>
+          <div className="flex items-center justify-between">
+            <DialogTitle>تاریخچه ارسال فاکتور</DialogTitle>
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={loading}
+              onClick={fetchHistory}
+              className="h-8 px-2"
+              title="تازه‌سازی"
+            >
+              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            </Button>
+          </div>
           <DialogDescription>
             {invoice
               ? `شماره فاکتور: ${invoice.invoiceNumber} — مشتری: ${invoice.customerName}`
-              : 'سوابق ارسال فاکتور'}
+              : 'سوابق ارسال فاکتور به سامانه مودیان'}
           </DialogDescription>
         </DialogHeader>
 
@@ -113,7 +152,7 @@ export function InvoiceSubmissionHistoryDialog({
               </div>
             ) : (
               attempts.map((attempt) => {
-                const info = statusInfo[attempt.status]
+                const info = statusInfo[attempt.status] || statusInfo.unknown
                 const Icon = info.Icon
 
                 return (
@@ -151,7 +190,7 @@ export function InvoiceSubmissionHistoryDialog({
                         <span className="text-muted-foreground">
                           شناسه پیگیری:{' '}
                         </span>
-                        <span dir="ltr">{attempt.trackingId}</span>
+                        <span dir="ltr" className="font-mono text-xs">{attempt.trackingId}</span>
                       </div>
                     )}
 
@@ -160,7 +199,7 @@ export function InvoiceSubmissionHistoryDialog({
                         <span className="text-muted-foreground">
                           شناسه مالیاتی صورتحساب:{' '}
                         </span>
-                        <span dir="ltr">{attempt.taxInvoiceId}</span>
+                        <span dir="ltr" className="font-mono text-xs">{attempt.taxInvoiceId}</span>
                       </div>
                     )}
 
@@ -169,7 +208,7 @@ export function InvoiceSubmissionHistoryDialog({
                         <span className="text-muted-foreground">
                           کد خطا:{' '}
                         </span>
-                        <span dir="ltr">{attempt.errorCode}</span>
+                        <span dir="ltr" className="font-mono text-xs text-destructive">{attempt.errorCode}</span>
                       </div>
                     )}
                   </div>
@@ -177,12 +216,6 @@ export function InvoiceSubmissionHistoryDialog({
               })
             )}
           </div>
-
-          <p className="text-xs text-muted-foreground">
-            این بخش اطلاعات موجود در تاریخچه فاکتور را نمایش می‌دهد.
-            ثبت خودکار نتیجه ارسال به سامانه مودیان و ذخیره‌سازی دائمی
-            به اتصال بک‌اند نیاز دارد.
-          </p>
         </div>
       </DialogContent>
     </Dialog>

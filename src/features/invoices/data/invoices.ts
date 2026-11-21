@@ -64,7 +64,6 @@ export const invoices: Invoice[] = [
     total: 126500000,
 
     status: 'draft',
-
     submissionHistory: [],
     createdAt: new Date('2026-09-28'),
     updatedAt: new Date('2026-09-28'),
@@ -133,7 +132,6 @@ export const invoices: Invoice[] = [
     total: 59290000,
 
     status: 'submitted',
-
     submissionHistory: [],
     createdAt: new Date('2026-09-29'),
     updatedAt: new Date('2026-09-29'),

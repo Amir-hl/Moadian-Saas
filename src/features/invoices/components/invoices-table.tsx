@@ -23,6 +23,8 @@ type InvoicesTableProps = {
   onDelete: (invoice: Invoice) => void
   onSelect: (invoice: Invoice) => void
   onShowHistory: (invoice: Invoice) => void
+  onSendToMoadian?: (invoice: Invoice) => void
+  onInquireMoadian?: (invoice: Invoice) => void
 }
 
 export function InvoicesTable({
@@ -31,6 +33,8 @@ export function InvoicesTable({
   onDelete,
   onSelect,
   onShowHistory,
+  onSendToMoadian,
+  onInquireMoadian,
 }: InvoicesTableProps) {
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState<'all' | InvoiceStatus>('all')
@@ -180,6 +184,8 @@ export function InvoicesTable({
                           onEdit={onEdit}
                           onDelete={onDelete}
                           onShowHistory={onShowHistory}
+                          onSendToMoadian={onSendToMoadian}
+                          onInquireMoadian={onInquireMoadian}
                         />
                       </div>
                     </TableCell>
